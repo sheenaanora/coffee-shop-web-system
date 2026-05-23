@@ -176,16 +176,22 @@ if(isset($_SESSION['name'])){}
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card h-100 shadow border-0">
                                 <img class="card-img-top" style="height:250px; object-fit:cover;" src="<?php echo $row['image_url']; ?>" alt="<?php echo $row['item_name']; ?>">
-                                <div class="card-body">
+                                <div class="card-body d-flex flex-column">
                                     <h4 class="card-title"><?php echo $row['item_name']; ?></h4>
                                     <h5 class="card-title">₱<?php echo number_format($row['price'], 2); ?></h5>
-                                    <p class="card-text mb-4"><?php echo $row['description']; ?></p>
+                                    <p class="card-text text-muted mb-3"><?php echo $row['description']; ?></p>
                                     <!-- Quantity input -->
                                     
                                 <label for="quantity_<?php echo $row['item_id']; ?>">Quantity:</label>
                                 <div class="input-group ">
                                    
-                                    <input type="number" name="quantity_<?php echo $row['item_id']; ?>" id="quantity_<?php echo $row['item_id']; ?>" class="form-control quantity-input-field" value="0" >
+                                    <input type="number" 
+                                    name="quantity_<?php echo $row['item_id']; ?>" 
+                                    id="quantity_<?php echo $row['item_id']; ?>" 
+                                    class="form-control text-center fw-bold" 
+                                    value="0" 
+                                    min="0"
+                                    style="max-width:100px;">
                                     </div>
                                 </div>
                             </div>
