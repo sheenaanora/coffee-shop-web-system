@@ -118,10 +118,12 @@ if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
  
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary ">Your cart</span>
-          <span class="badge bg-primary rounded-circle "> <?php echo "$quantity" ?></span>
+          <span class="badge bg-primary rounded-pill px-3 py-2">
+            <?php echo $totalQuantity; ?>
+          </span>
         </h4>
-        <table class="table text-primary">
-          <thead class="text-primary">
+       <table class="table table-bordered bg-white">
+          <thead class="table-dark">
             <tr>
               <th scope="col">Item Name</th>
               <th scope="col">Price</th>
@@ -140,19 +142,20 @@ if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
               $itemName = $row['item_name'];
               $price = $row['price'];
           echo "
-              <tr>
-                <td>$itemName</td>
-                <td>$price</td>
-                <td> $quantity</td> 
-              </tr>";
+            <tr>
+              <td>$itemName</td>
+              <td>₱" . number_format((float)$price, 2) . "</td>
+              <td>$quantity</td>
+            </tr>
+            ";
             }
             ?>
           </tbody>
           <tfoot >
             <tr>
-              <th scope="col">Total</th>
-              <td scope="col"><?php echo $totalPrice; ?></td>
-              <td scope="col"><?php echo $totalQuantity; ?></td> <!-- Display quantity -->
+              <th class="fw-bold">Total</th>
+              <td class="fw-bold text-success">₱<?php echo number_format($totalPrice, 2); ?></td>
+              <td class="fw-bold"><?php echo $totalQuantity; ?></td> <!-- Display quantity -->
             </tr>
           </tfoot>
           
@@ -166,7 +169,7 @@ if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
                 <a type="button" class="btn btn-primary mx-5 px-5"  onclick=window.history.back()>Back</a>
               </div>
             </form>
-            <div class="input-group">
+            <div class="d-flex justify-content-center gap-3 mt-4">
            
 
           </div>
@@ -181,17 +184,6 @@ if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
     </div>
   </div>
 
-
-
-  <!-- insert function on click event -->
-<script>
-function buyOrder()
-{
-  header("Location:insert_order.php"); 
-}
-
-
-</script>
 
           <!-- JavaScript Libraries -->
           <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
