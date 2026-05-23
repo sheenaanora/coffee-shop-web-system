@@ -173,9 +173,9 @@ if(isset($_SESSION['name'])){}
                     // Loop through each row of data
                     while ($row = mysqli_fetch_assoc($result)) {
                         ?>
-                        <div class="col-xl-3 mb-5">
-                            <div class="card h-100">
-                                <img class="card-img-top" src="<?php echo $row['image_url']; ?>" alt="<?php echo $row['item_name']; ?>">
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card h-100 shadow border-0">
+                                <img class="card-img-top" style="height:250px; object-fit:cover;" src="<?php echo $row['image_url']; ?>" alt="<?php echo $row['item_name']; ?>">
                                 <div class="card-body">
                                     <h4 class="card-title"><?php echo $row['item_name']; ?></h4>
                                     <h5 class="card-title">₱<?php echo number_format($row['price'], 2); ?></h5>
@@ -200,7 +200,7 @@ if(isset($_SESSION['name'])){}
                 mysqli_close($conn);
                 ?>
                 <div class="col-md-4 mb-5">
-                <button type="button" class="btn btn-primary btn-block" onclick="addToCart()">Add to Cart</button>
+                <button type="button" class="btn btn-warning px-5 py-2 fw-bold" onclick="addToCart()">Add to Cart</button>
               <!-- Button trigger modal -->
               
             </div>
