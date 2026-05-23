@@ -1,26 +1,36 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['name'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <!-- Custom styles -->
-    <style>
-        /* Custom styles if needed */
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1 class="my-4">Order Confirmation</h1>
-        <div class="alert alert-success" role="alert">
-            Thank you for your order! Your order has been successfully placed.
+<body style="background:#eef6fb;">
+
+<div class="container min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="card shadow border-0 text-center p-5" style="max-width: 600px;">
+        <h1 class="text-primary mb-3">Order Placed Successfully!</h1>
+        <p class="lead">Thank you for ordering from Coffee Shop.</p>
+        <p>Your order has been saved and will be prepared by the admin.</p>
+
+        <div class="mt-4">
+            <a href="menu.php" class="btn btn-primary px-4">Continue Shopping</a>
+            <a href="index.php" class="btn btn-outline-dark px-4 ms-2">Back to Home</a>
         </div>
-        <p>You will receive an email confirmation shortly. <a href="index.php">Return to Home</a></p>
     </div>
-    <!-- Bootstrap JS (optional) -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+
 </body>
 </html>
