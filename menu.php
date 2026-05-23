@@ -76,7 +76,7 @@ if(isset($_SESSION['name'])){}
             updateCartCounter(cartItems.length);
 
             // Alert user
-            alert("Added items to your cart.");
+            alert("Coffee added to cart successfully!");
         }
 
         function updateCartCounter(count) {
@@ -205,7 +205,7 @@ if(isset($_SESSION['name'])){}
                 // Close database connection
                 mysqli_close($conn);
                 ?>
-                <div class="col-md-4 mb-5">
+                <div class="col-12 text-center my-4">
                 <button type="button" class="btn btn-warning px-5 py-2 fw-bold" onclick="addToCart()">Add to Cart</button>
               <!-- Button trigger modal -->
               
