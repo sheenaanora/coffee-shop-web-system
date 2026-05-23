@@ -122,7 +122,6 @@ if(isset($_SESSION['name'])){}
                             } else {
                                 echo "Guest";
                             } ?></li>
-                        <li><a class="dropdown-item" href="settings.php">Settings</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -143,7 +142,7 @@ if(isset($_SESSION['name'])){}
             <!-- Navbar end -->
             <div class="container-xxl py-5 bg-dark hero-header mb-5">
                 <div class="container text-center my-5 pt-5 pb-4">
-                    <h1 class="display-3 text-white mb-3 animated slideInDown">Food Menu</h1>
+                    <h1 class="display-3 text-white mb-3 animated slideInDown">Coffee Menu</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center text-uppercase">
                             <li class="breadcrumb-item"><a href="index.php">Home</a></li>
@@ -179,7 +178,7 @@ if(isset($_SESSION['name'])){}
                                 <img class="card-img-top" src="<?php echo $row['image_url']; ?>" alt="<?php echo $row['item_name']; ?>">
                                 <div class="card-body">
                                     <h4 class="card-title"><?php echo $row['item_name']; ?></h4>
-                                    <h5 class="card-title">₹<?php echo $row['price']; ?></h5>
+                                    <h5 class="card-title">₱<?php echo number_format($row['price'], 2); ?></h5>
                                     <p class="card-text mb-4"><?php echo $row['description']; ?></p>
                                     <!-- Quantity input -->
                                     
