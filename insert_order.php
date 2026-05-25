@@ -1,39 +1,56 @@
-
 <?php
 session_start();
-require('datacon.php');
 
-// Check if user is logged in
 if (!isset($_SESSION['name'])) {
-    // Redirect to login page if user is not logged in
     header("Location: login.php");
     exit();
 }
 
-// Check if the form is submitted
+if (
+    !isset($_SESSION['totalPrice']) ||
+    !isset($_SESSION['totalQuantity']) ||
+    !isset($_SESSION['item_name_quantity'])
+) {
+    header("Location: menu.php");
+    exit();
+}
 
-    // Get the total price, quantity, item name quantity, and customer ID from the form
-    // require('checkout.php');
-    $totalPrice =  $_SESSION['totalPrice'];
-    $totalQuantity =$_SESSION['totalQuantity'];
-    $item_name_quantity = $_SESSION['item_name_quantity'];
-    $customerId = $_SESSION['customer_id'];
+$totalPrice = $_SESSION['totalPrice'];
+$totalQuantity = $_SESSION['totalQuantity'];
+$item_name_quantity = $_SESSION['item_name_quantity'];
+$customerName = $_SESSION['name'];
 
-    // Insert the order into the orders table
-    $orderDate = date("Y-m-d H:i:s");
-    $query = "INSERT INTO orders (customer_id, order_date, quantity, item_name_quantity, total_price) VALUES (?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "isisi", $customerId, $orderDate, $totalQuantity, $item_name_quantity, $totalPrice);
-    
-    if (mysqli_stmt_execute($stmt)) {
-        // Order successfully inserted
-        echo '<script>alert("Order Placed Succesfully"); window.location.href = "menu.php";</script>';
-        exit();
-        // header("Location:menu.php");
-    } else {
-        // Error inserting order
-        echo "<script>alert('Failed to place order');</script>";
-        
-    }
+$apiUrl = "http://localhost/coffee-api/add_order.php";
 
+$postData = [
+    "customer_name" => $customerName,
+    "product_name" => $item_name_quantity,
+    "quantity" => $totalQuantity,
+    "total_price" => $totalPrice
+];
+
+$ch = curl_init($apiUrl);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+$error = curl_error($ch);
+curl_close($ch);
+
+if ($error) {
+    echo "<script>alert('API connection failed. Please make sure the API server is running.'); window.location.href='checkout.php';</script>";
+    exit();
+}
+
+$result = json_decode($response, true);
+
+if (isset($result['success']) && $result['success'] === true) {
+    unset($_SESSION['cart_items']);
+    header("Location: confirmation.php");
+    exit();
+} else {
+    echo "<script>alert('Failed to place order through API.'); window.location.href='checkout.php';</script>";
+    exit();
+}
 ?>
