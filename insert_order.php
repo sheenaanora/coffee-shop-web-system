@@ -17,14 +17,16 @@ if (
 
 $totalPrice = $_SESSION['totalPrice'];
 $totalQuantity = $_SESSION['totalQuantity'];
-$item_name_quantity = $_SESSION['item_name_quantity'];
+$productName = $_SESSION['item_name_quantity'];
+$productName = preg_replace('/\s*x\s*\d+\s*,?/i', '', $productName);
+$productName = trim($productName);
 $customerName = $_SESSION['name'];
 
 $apiUrl = "http://localhost/coffee-api/add_order.php";
 
 $postData = [
     "customer_name" => $customerName,
-    "product_name" => $item_name_quantity,
+    "product_name" => $productName,
     "quantity" => $totalQuantity,
     "total_price" => $totalPrice
 ];

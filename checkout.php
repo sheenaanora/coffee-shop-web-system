@@ -2,36 +2,43 @@
 session_start();
 require('datacon.php');
 
-// Check if user is logged in
 if (!isset($_SESSION['name'])) {
-  header("location:login.php");
-  exit(); // Stop further execution
+    header("location:login.php");
+    exit();
 }
-// Initialize variables
-$cartItems = []; // Initialize as an empty array
-$totalPrice = 0; // Initialize total price
-$totalQuantity = 0; // Initialize total quantity
-$item_name_quantity = "";
-// Check if cart items are stored in session
+
+$cartItems = [];
+$totalPrice = 0;
+$totalQuantity = 0;
+$coffee_name_quantity = "";
+
 if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
-  $cartItems = $_SESSION['cart_items'];
+    $cartItems = $_SESSION['cart_items'];
 
-  // Output cart items in the modal and calculate total price
-  foreach ($cartItems as $item) {
-    list($itemId, $quantity) = explode(':', $item);
-    $query = "SELECT item_name, price FROM menu WHERE item_id = $itemId";
-    $result = mysqli_query($conn, $query);
-    $row = mysqli_fetch_assoc($result);
-    $itemName = $row['item_name'];
-    $price = $row['price'];
-    $totalPrice += $price * $quantity;
-    $totalQuantity += $quantity; // Sum up quantities
-    $item_name_quantity = $item_name_quantity . $itemName . " x " . $quantity . ", ";
-    $_SESSION['item_name_quantity']=$item_name_quantity;
-    $_SESSION['totalPrice']=$totalPrice;
-    $_SESSION['totalQuantity']=$totalQuantity;
+    foreach ($cartItems as $item) {
+        list($itemId, $quantity) = explode(':', $item);
 
-  }
+        $query = "SELECT coffee_name, price FROM products WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $itemId);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_assoc($result);
+
+        if ($row) {
+            $itemName = $row['coffee_name'];
+            $price = $row['price'];
+
+            $totalPrice += $price * $quantity;
+            $totalQuantity += $quantity;
+            $coffee_name_quantity .= $itemName . " x " . $quantity . ", ";
+        }
+    }
+
+    $_SESSION['coffee_name_quantity'] = $coffee_name_quantity;
+    $_SESSION['item_name_quantity'] = $coffee_name_quantity;
+    $_SESSION['totalPrice'] = $totalPrice;
+    $_SESSION['totalQuantity'] = $totalQuantity;
 }
 ?>
 
@@ -136,11 +143,20 @@ if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
             // Output cart items
             foreach ($cartItems as $item) {
               list($itemId, $quantity) = explode(':', $item);
-              $query = "SELECT item_name, price FROM menu WHERE item_id = $itemId";
-              $result = mysqli_query($conn, $query);
-              $row = mysqli_fetch_assoc($result);
-              $itemName = $row['item_name'];
-              $price = $row['price'];
+              $query = "SELECT coffee_name, price FROM products WHERE id = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "i", $itemId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$row = mysqli_fetch_assoc($result);
+
+if (!$row) {
+    continue;
+}
+
+$itemName = $row['coffee_name'];
+$price = $row['price'];
+              
           echo "
             <tr>
               <td>$itemName</td>
