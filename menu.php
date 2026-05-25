@@ -5,7 +5,6 @@ session_start();
 
 // Check if dark mode preference is set in session
 $darkMode = isset($_SESSION['dark_mode']) ? $_SESSION['dark_mode'] : false;
-require('datacon.php');
 if(isset($_SESSION['name'])){}
 	else{
 		header("location:login.php");
@@ -162,16 +161,15 @@ if(isset($_SESSION['name'])){}
         <form action="addToCart.php" method="post" id="orderForm">
             <div class="row ">
                 <?php
-                include("datacon.php"); // Include database connection file
 
                 // Query to fetch menu items from the database
-                $sql = "SELECT * FROM products WHERE coffee_name != '' ORDER BY id DESC";
-                $result = mysqli_query($conn, $sql);
+                $apiUrl = "http://127.0.0.1:8001/products.php";
+                $response = @file_get_contents($apiUrl);
+                $products = json_decode($response, true);
 
                 // Check if there are any menu items
-                if (mysqli_num_rows($result) > 0) {
-                    // Loop through each row of data
-                    while ($row = mysqli_fetch_assoc($result)) {
+                if (!empty($products)) {
+                        foreach ($products as $row) {
                         ?>
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card h-100 shadow border-0">
@@ -202,11 +200,9 @@ if(isset($_SESSION['name'])){}
                     <?php
                     }
                 } else {
-                    echo "No menu items available.";
+                    echo "API Server Offline. No menu items available.";
                 }
 
-                // Close database connection
-                mysqli_close($conn);
                 ?>
                 <div class="col-12 text-center my-4">
                 <button type="button" class="btn btn-warning px-5 py-2 fw-bold" onclick="addToCart()">Add to Cart</button>
