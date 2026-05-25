@@ -30,12 +30,29 @@ if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
     foreach ($cartItems as $item) {
         $itemData = explode(':', $item);
 
-if (count($itemData) < 2) {
-    continue;
-}
+        if (count($itemData) < 2) {
+            continue;
+        }
 
-$itemId = $itemData[0];
-$quantity = $itemData[1];
+        $itemId = $itemData[0];
+        $quantity = $itemData[1];
+
+        if (!isset($productMap[$itemId])) {
+            continue;
+        }
+
+        $itemName = $productMap[$itemId]['coffee_name'];
+        $price = $productMap[$itemId]['price'];
+        $lineTotal = $price * $quantity;
+
+        $totalPrice += $lineTotal;
+        $totalQuantity += $quantity;
+
+        if ($coffee_name_quantity != "") {
+            $coffee_name_quantity .= ", ";
+        }
+
+        $coffee_name_quantity .= $itemName;
     }
 
     $_SESSION['coffee_name_quantity'] = $coffee_name_quantity;
@@ -158,14 +175,6 @@ $quantity = $itemData[1];
         if (!isset($productMap[$itemId])) {
     continue;
 }
-
-$itemName = $productMap[$itemId]['coffee_name'];
-$price = $productMap[$itemId]['price'];
-$lineTotal = $price * $quantity;
-
-$totalPrice += $lineTotal;
-$totalQuantity += $quantity;
-$coffee_name_quantity .= $itemName . " x " . $quantity . ", ";
 
 $itemName = $productMap[$itemId]['coffee_name'];
 $price = $productMap[$itemId]['price'];
