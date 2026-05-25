@@ -165,7 +165,7 @@ if(isset($_SESSION['name'])){}
                 include("datacon.php"); // Include database connection file
 
                 // Query to fetch menu items from the database
-                $sql = "SELECT * FROM menu";
+                $sql = "SELECT * FROM products WHERE coffee_name != '' ORDER BY id DESC";
                 $result = mysqli_query($conn, $sql);
 
                 // Check if there are any menu items
@@ -175,19 +175,22 @@ if(isset($_SESSION['name'])){}
                         ?>
                         <div class="col-lg-3 col-md-6 mb-4">
                             <div class="card h-100 shadow border-0">
-                                <img class="card-img-top" style="height:250px; object-fit:cover;" src="<?php echo $row['image_url']; ?>" alt="<?php echo $row['item_name']; ?>">
+                                <img class="card-img-top"
+     src="<?php echo $row['product_image']; ?>"
+     alt="<?php echo $row['coffee_name']; ?>"
+     style="width:100%; height:250px; object-fit:cover;">
                                 <div class="card-body d-flex flex-column">
-                                    <h4 class="card-title"><?php echo $row['item_name']; ?></h4>
+                                    <h4 class="card-title"><?php echo $row['coffee_name']; ?></h4>
                                     <h5 class="card-title">₱<?php echo number_format($row['price'], 2); ?></h5>
                                     <p class="card-text text-muted mb-3"><?php echo $row['description']; ?></p>
                                     <!-- Quantity input -->
                                     
-                                <label for="quantity_<?php echo $row['item_id']; ?>">Quantity:</label>
+                                <label for="quantity_<?php echo $row['id']; ?>">Quantity:</label>
                                 <div class="input-group ">
                                    
                                     <input type="number" 
-                                    name="quantity_<?php echo $row['item_id']; ?>" 
-                                    id="quantity_<?php echo $row['item_id']; ?>" 
+                                    name="quantity_<?php echo $row['id']; ?>" 
+                                    id="quantity_<?php echo $row['id']; ?>" 
                                     class="form-control text-center fw-bold" 
                                     value="0" 
                                     min="0"
