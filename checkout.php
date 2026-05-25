@@ -1,6 +1,5 @@
 <?php
 session_start();
-require('datacon.php');
 
 if (!isset($_SESSION['name'])) {
     header("location:login.php");
@@ -11,28 +10,32 @@ $cartItems = [];
 $totalPrice = 0;
 $totalQuantity = 0;
 $coffee_name_quantity = "";
+$status = "Pending";
+
+$apiUrl = "http://127.0.0.1:8001/products.php";
+$response = @file_get_contents($apiUrl);
+$products = json_decode($response, true);
+
+$productMap = [];
+
+if (!empty($products)) {
+    foreach ($products as $product) {
+        $productMap[$product['id']] = $product;
+    }
+}
 
 if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
     $cartItems = $_SESSION['cart_items'];
 
     foreach ($cartItems as $item) {
-        list($itemId, $quantity) = explode(':', $item);
+        $itemData = explode(':', $item);
 
-        $query = "SELECT coffee_name, price FROM products WHERE id = ?";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "i", $itemId);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $row = mysqli_fetch_assoc($result);
+if (count($itemData) < 2) {
+    continue;
+}
 
-        if ($row) {
-            $itemName = $row['coffee_name'];
-            $price = $row['price'];
-
-            $totalPrice += $price * $quantity;
-            $totalQuantity += $quantity;
-            $coffee_name_quantity .= $itemName . " x " . $quantity . ", ";
-        }
+$itemId = $itemData[0];
+$quantity = $itemData[1];
     }
 
     $_SESSION['coffee_name_quantity'] = $coffee_name_quantity;
@@ -131,49 +134,73 @@ if (isset($_SESSION['cart_items']) && is_array($_SESSION['cart_items'])) {
         </h4>
        <table class="table table-bordered bg-white">
           <thead class="table-dark">
-            <tr>
-              <th scope="col">Item Name</th>
-              <th scope="col">Price</th>
-              <th scope="col">Quantity</th>
-            </tr>
-          </thead>
+    <tr>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total Price</th>
+        <th>Status</th>
+    </tr>
+</thead>
           <tbody>
-            <?php
-            require('datacon.php');
-            // Output cart items
-            foreach ($cartItems as $item) {
-              list($itemId, $quantity) = explode(':', $item);
-              $query = "SELECT coffee_name, price FROM products WHERE id = ?";
-$stmt = mysqli_prepare($conn, $query);
-mysqli_stmt_bind_param($stmt, "i", $itemId);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-$row = mysqli_fetch_assoc($result);
+<?php
+if (!empty($cartItems) && !empty($products)) {
+    foreach ($cartItems as $item) {
+        $itemData = explode(':', $item);
 
-if (!$row) {
+if (count($itemData) < 2) {
     continue;
 }
 
-$itemName = $row['coffee_name'];
-$price = $row['price'];
-              
-          echo "
-            <tr>
-              <td>$itemName</td>
-              <td>₱" . number_format((float)$price, 2) . "</td>
-              <td>$quantity</td>
-            </tr>
-            ";
-            }
-            ?>
-          </tbody>
-          <tfoot >
-            <tr>
-              <th class="fw-bold">Total</th>
-              <td class="fw-bold text-success">₱<?php echo number_format($totalPrice, 2); ?></td>
-              <td class="fw-bold"><?php echo $totalQuantity; ?></td> <!-- Display quantity -->
-            </tr>
-          </tfoot>
+$itemId = $itemData[0];
+$quantity = $itemData[1];
+
+        if (!isset($productMap[$itemId])) {
+    continue;
+}
+
+$itemName = $productMap[$itemId]['coffee_name'];
+$price = $productMap[$itemId]['price'];
+$lineTotal = $price * $quantity;
+
+$totalPrice += $lineTotal;
+$totalQuantity += $quantity;
+$coffee_name_quantity .= $itemName . " x " . $quantity . ", ";
+
+$itemName = $productMap[$itemId]['coffee_name'];
+$price = $productMap[$itemId]['price'];
+$lineTotal = $price * $quantity;
+
+echo "
+<tr>
+    <td>$itemName</td>
+    <td>$quantity</td>
+    <td>₱" . number_format((float)$price, 2) . "</td>
+    <td>₱" . number_format((float)$lineTotal, 2) . "</td>
+    <td>$status</td>
+</tr>
+";
+    }
+} else {
+    echo "
+    <tr>
+        <td colspan='5' class='text-center text-danger fw-bold'>
+            API Server Offline. No cart data available.
+        </td>
+    </tr>
+    ";
+}
+?>
+</tbody>
+          <tfoot>
+    <tr>
+        <th>Total</th>
+        <td class="fw-bold"><?php echo $totalQuantity; ?></td>
+        <td></td>
+        <td class="fw-bold text-success">₱<?php echo number_format($totalPrice, 2); ?></td>
+        <td><?php echo (!empty($cartItems) && !empty($products) && $totalQuantity > 0) ? $status : "No Data"; ?></td>
+    </tr>
+</tfoot>
           
         </table>
         <div class="container ">
@@ -181,7 +208,11 @@ $price = $row['price'];
         
             <form id="buyForm" action="insert_order.php" method="POST" class="card p-2">
               <div class="input-group  ">
-                <button type="submit" class="btn btn-primary px-5  " id="buyButton" onclick="buyOrder()">Buy</button>
+                <?php if (!empty($cartItems) && !empty($products) && $totalQuantity > 0) { ?>
+    <button type="submit" class="btn btn-primary px-5" id="buyButton">Buy</button>
+<?php } else { ?>
+    <button type="button" class="btn btn-secondary px-5" disabled>No Order Available</button>
+<?php } ?>
                 <a type="button" class="btn btn-primary mx-5 px-5"  onclick=window.history.back()>Back</a>
               </div>
             </form>
